@@ -1,8 +1,13 @@
+
+from traceback import print_tb
 from typing import List, Iterator, Dict, Tuple, Any, Type
 
 import numpy as np
 import torch
 from copy import deepcopy
+
+from sklearn import preprocessing
+import random
 
 np.random.seed(1901)
 
@@ -112,10 +117,10 @@ class Attack:
         """
         output, scores = self.fitness(population, target_label)
         # --------------TODO--------------
-        score_ranks = None  # Sort the scores from largeset to smallest
-        best_index = 0  # The index for the best scored candidate
-        logits = None  # Exponentiate the scores after incorporating temperature
-        select_probs = None  # Normalize the logits between 0-1
+        score_ranks = sorted(scores, reverse=True)  # Sort the scores from largeset to smallest
+        best_index = np.where(scores == score_ranks[0])[0][0] # The index for the best scored candidate
+        logits = list(map(lambda x : np.exp(x/self.temperature), score_ranks))  # Exponentiate the scores after incorporating temperature
+        select_probs = list(map(lambda x : x / sum(logits), logits)) # Normalize the logits between 0-1
         # ------------END TODO-------------
 
         if np.argmax(output[best_index, :]) == target_label:
@@ -124,17 +129,46 @@ class Attack:
         # --------------TODO--------------
         # Compute the next generation of population, which is comprised of Elite, Survived, and Offspirngs
         # Elite: top scoring gene, will not be mutated
-        elite = []
+        elite = [population[best_index]]
 
         # Survived: rest of the top genes that survived, mutated with some probability
         survived = []  # Survived, and mutate some of them
+
+        # FIX: 1. Add a list to store index of each largest to smallest 
+        #      2. Figure out (1 - self.child_rate) below 
+        for i in range(int(len(score_ranks) * self.child_rate)):
+            current_index = np.where(scores == score_ranks[i + 1])[0][0]
+            survived.append(population[current_index])
         
+        random.shuffle(survived)
+        for i in range(int(len(survived) * self.mutate_rate)):
+            survived[i] = self.perturb(survived[i])
+
         # Offsprings: offsprings of strong genes
         # Identify the parents of the children based on select_probs, then use crossover to produce the next generation
         children = []
+        for i in range(len(score_ranks) - len(elite) - len(survived)): 
+            totalProb = 0
+            random1 = np.random.random()
+            random2 = np.random.random()
+            posible1 = None
+            posible2 = None
+
+            for i in range(len(select_probs)):
+                totalProb += select_probs[i]
+                if totalProb > random1 and posible1 == None:
+                    posible1 = i
+                if totalProb > random2 and posible2 == None:
+                    posible2 = i
+                if totalProb > random1 and totalProb > random2:
+                    break
+
+            parent1 = np.where(scores==score_ranks[posible1])[0][0]
+            parent2 = np.where(scores==score_ranks[posible2])[0][0]
+            children.append(self.crossover(population[parent1], population[parent2]))
         
-        # population =np.array(elite + survived +children)
-        population = population  # Delete this and uncomment the line above if you finished implementing
+        population =np.array(elite + survived +children)
+        #population = population  # Delete this and uncomment the line above if you finished implementing
         # ------------END TODO-------------
         return population, output, scores, best_index
 

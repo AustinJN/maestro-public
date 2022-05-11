@@ -2,6 +2,7 @@
 The template for the students to train the model.
 Please do not change the name of the functions in Adv_Training.
 """
+from audioop import cross
 import sys
 sys.path.append("../../../")
 import torch
@@ -84,12 +85,19 @@ class Adv_Training():
                 labels = labels.to(device)
                 # zero the parameter gradients
             # --------------TODO--------------\
-                adv_inputs, _ = self.perturb.attack(inputs, labels.detach().cpu().tolist())
-                adv_inputs = torch.tensor(adv_inputs).to(device)                
+                #adv_inputs, _ = self.perturb.attack(inputs, labels.detach().cpu().tolist())
+                #adv_inputs = torch.tensor(adv_inputs).to(device)                
                 # zero the parameter gradients
                 optimizer.zero_grad()
                 outputs = self.model(inputs)
                 loss = criterion(outputs, labels)
+
+                for x in range(5):
+                    perturbed, _ = self.perturb.attack(inputs, labels.detach().cpu().tolist())
+                    perturbed = torch.tensor(perturbed).to(device)
+                    pert_output = self.model(perturbed)
+                    loss += criterion(pert_output, labels)
+
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()
