@@ -55,7 +55,7 @@ class Prediction():
 
     def preprocess(self, original_images):
         #image = torch.unsqueeze(original_images, 0)
-        print(torch.size(original_images))
+        print(torch.Size(original_images))
         image = transform.GaussianBlur(original_images, sigma=(0.1, 2.0))
         return image
 
