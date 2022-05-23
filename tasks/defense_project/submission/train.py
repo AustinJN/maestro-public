@@ -86,9 +86,9 @@ class Adv_Training():
                 
                 perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
                 perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
-                perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), 0)
+                perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), 1)
                 perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
-                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), 0)
+                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), 1)
                 perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
 
                 # zero the parameter gradients
