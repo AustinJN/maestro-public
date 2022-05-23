@@ -2,3 +2,4 @@
 **/datasets/CIFAR10/**
 datasets/*
 **/*.pth
+**/*.pt
