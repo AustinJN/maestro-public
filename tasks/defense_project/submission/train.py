@@ -87,8 +87,8 @@ class Adv_Training():
                 perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
                 perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
 
-                perturbed_FGSM, _ = None
-                perturbed_PGD, _ = None
+                perturbed_FGSM = None
+                perturbed_PGD = None
                 
                 if self.target_label:
                     perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), self.target_label)
