@@ -54,8 +54,8 @@ class Prediction():
         return model
 
     def preprocess(self, original_images):
-        image = torch.unsqueeze(original_images, 0)
-        image = transform.GaussianBlur(image, sigma=(0.1, 2.0))
+        #image = torch.unsqueeze(original_images, 0)
+        image = transform.GaussianBlur(original_images, sigma=(0.1, 2.0))
         return image
 
     def detect_attack(self, original_image):
