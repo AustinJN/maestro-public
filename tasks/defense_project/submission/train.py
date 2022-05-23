@@ -86,10 +86,14 @@ class Adv_Training():
                 
                 perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
                 perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
-                perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), 1)
-                perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
-                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), 1)
-                perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
+                
+                perturbed_FGSM = None
+                perturbed_PGD = None
+                if self.target_label:
+                    perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), self.target_label)
+                    perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
+                    perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), self.target_label)
+                    perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
@@ -98,10 +102,12 @@ class Adv_Training():
 
                 pert_output = self.model(perturbed_nonFGSM)
                 loss += criterion(pert_output, labels)
-                pert_output = self.model(perturbed_FGSM)
-                loss += criterion(pert_output, labels)
-                pert_output = self.model(perturbed_PGD)
-                loss += criterion(pert_output, labels)
+
+                if self.target_label:
+                    pert_output = self.model(perturbed_FGSM)
+                    loss += criterion(pert_output, labels)
+                    pert_output = self.model(perturbed_PGD)
+                    loss += criterion(pert_output, labels)
 
                 loss.backward()
                 optimizer.step()
@@ -126,7 +132,7 @@ class Adv_Training():
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    adv_training = Adv_Training(device, file_path='.')
+    adv_training = Adv_Training(device, file_path='.', target_label=0)
     dataset_configs = {
                 "name": "CIFAR10",
                 "binary": True,
