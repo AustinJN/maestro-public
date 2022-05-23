@@ -84,24 +84,24 @@ class Adv_Training():
                 inputs = inputs.to(device)
                 labels = labels.to(device)
                 
-                #perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
-                #perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
+                perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
+                perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
                 #perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), labels)
                 #perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
-                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), labels)
-                perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
+                #perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), labels)
+                #perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
                 outputs = self.model(inputs)
                 loss = criterion(outputs, labels)
 
-                #pert_output = self.model(perturbed_nonFGSM)
-                #loss += criterion(pert_output, labels)
+                pert_output = self.model(perturbed_nonFGSM)
+                loss += criterion(pert_output, labels)
                 #pert_output = self.model(perturbed_FGSM)
                 #loss += criterion(pert_output, labels)
-                pert_output = self.model(perturbed_PGD)
-                loss += criterion(pert_output, labels)
+                #pert_output = self.model(perturbed_PGD)
+                #loss += criterion(pert_output, labels)
 
                 loss.backward()
                 optimizer.step()
