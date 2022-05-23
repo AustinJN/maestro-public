@@ -86,10 +86,10 @@ class Adv_Training():
                 
                 perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
                 perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
-                #perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), labels)
-                #perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
-                #perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), labels)
-                #perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
+                perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), 1)
+                perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
+                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), 1)
+                perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
@@ -98,16 +98,15 @@ class Adv_Training():
 
                 pert_output = self.model(perturbed_nonFGSM)
                 loss += criterion(pert_output, labels)
-                #pert_output = self.model(perturbed_FGSM)
-                #loss += criterion(pert_output, labels)
-                #pert_output = self.model(perturbed_PGD)
-                #loss += criterion(pert_output, labels)
+                pert_output = self.model(perturbed_FGSM)
+                loss += criterion(pert_output, labels)
+                pert_output = self.model(perturbed_PGD)
+                loss += criterion(pert_output, labels)
 
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()
 
-                #trainloader.
             print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / dataset_size))
             running_loss = 0.0
         valloader = torch.utils.data.DataLoader(valset, batch_size=100, shuffle=True, num_workers=10)

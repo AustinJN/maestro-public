@@ -55,10 +55,10 @@ class Prediction():
 
     def preprocess(self, original_images):
         image = torch.unsqueeze(original_images, 0)
-        blurrer = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
-        blurred_img = blurrer(image)
-        return blurred_img
-        #return image
+        #blurrer = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
+        #blurred_img = blurrer(image)
+        #return blurred_img
+        return image
 
     def detect_attack(self, original_image):
         return False
