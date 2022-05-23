@@ -8,6 +8,7 @@ import numpy as np
 import torch.nn.functional as F
 import torch.nn as nn
 import torch.optim as optim
+import torch.transforms as transform
 
 class LeNet(nn.Module):
     def __init__(self):
@@ -54,6 +55,7 @@ class Prediction():
 
     def preprocess(self, original_images):
         image = torch.unsqueeze(original_images, 0)
+        image = transform.GaussianBlur(image, sigma=(0.1, 2.0))
         return image
 
     def detect_attack(self, original_image):
