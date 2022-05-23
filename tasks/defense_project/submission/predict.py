@@ -8,7 +8,7 @@ import numpy as np
 import torch.nn.functional as F
 import torch.nn as nn
 import torch.optim as optim
-import torch.transforms as transform
+import torchvision.transforms as transform
 
 class LeNet(nn.Module):
     def __init__(self):
