@@ -64,7 +64,7 @@ class Prediction():
         #autocontraster = T.RandomAutocontrast()
         #autocontrasted_img = autocontraster(image)
         #return autocontrasted_img
-        blurrer = T.GaussianBlur(kernel_size=(1, 9), sigma=(0.1, 9))
+        blurrer = T.GaussianBlur(kernel_size=(1, 9), sigma=(0.1, 5))
         blurred_img = blurrer(image)
         return blurred_img
         #return image
