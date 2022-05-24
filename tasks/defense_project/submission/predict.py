@@ -59,7 +59,7 @@ class Prediction():
         #jitted_imgs = jitter(image)
         #return jitted_imgs
         equalizer = T.RandomEqualize()
-        equalized_imgs = equalizer(image)
+        equalized_imgs = equalizer(original_images)
         return equalized_imgs
         #blurrer = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
         #blurred_img = blurrer(image)
