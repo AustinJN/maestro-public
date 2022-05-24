@@ -86,9 +86,9 @@ class Adv_Training():
                 
                 perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
                 perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
-                perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), labels)
+                perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), 0)
                 perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
-                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), labels)
+                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), 0)
                 perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
 
                 # zero the parameter gradients
@@ -97,17 +97,17 @@ class Adv_Training():
                 loss = criterion(outputs, labels)
 
                 pert_output = self.model(perturbed_nonFGSM)
-                loss += criterion(pert_output, labels)
+                loss += criterion(pert_output, labels)  
                 pert_output = self.model(perturbed_FGSM)
                 loss += criterion(pert_output, labels)
                 pert_output = self.model(perturbed_PGD)
                 loss += criterion(pert_output, labels)
 
+
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()
 
-                #trainloader.
             print('[%d, %5d] loss: %.3f' % (epoch + 1, i + 1, running_loss / dataset_size))
             running_loss = 0.0
         valloader = torch.utils.data.DataLoader(valset, batch_size=100, shuffle=True, num_workers=10)
@@ -127,7 +127,7 @@ class Adv_Training():
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    adv_training = Adv_Training(device, file_path='.')
+    adv_training = Adv_Training(device, file_path='.', target_label=0)
     dataset_configs = {
                 "name": "CIFAR10",
                 "binary": True,
