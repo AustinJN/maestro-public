@@ -61,12 +61,12 @@ class Prediction():
         #equalizer = T.RandomEqualize()
         #equalized_img = equalizer(image)
         #return equalized_img
-        autocontraster = T.RandomAutocontrast()
-        autocontrasted_img = autocontraster(image)
-        return autocontrasted_img
-        #blurrer = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
-        #blurred_img = blurrer(image)
-        #return blurred_img
+        #autocontraster = T.RandomAutocontrast()
+        #autocontrasted_img = autocontraster(image)
+        #return autocontrasted_img
+        blurrer = T.GaussianBlur(kernel_size=(5, 9), sigma=(0.1, 5))
+        blurred_img = blurrer(image)
+        return blurred_img
         #return image
 
     def detect_attack(self, original_image):
