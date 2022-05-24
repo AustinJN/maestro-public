@@ -56,11 +56,14 @@ class Prediction():
     def preprocess(self, original_images):
         image = torch.unsqueeze(original_images, 0)
         #jitter = T.ColorJitter(brightness=.5, hue=.3)
-        #jitted_imgs = jitter(image)
-        #return jitted_imgs
-        equalizer = T.RandomEqualize()
-        equalized_imgs = equalizer(original_images)
-        return equalized_imgs
+        #jitted_img = jitter(image)
+        #return jitted_img
+        #equalizer = T.RandomEqualize()
+        #equalized_img = equalizer(image)
+        #return equalized_img
+        autocontraster = T.RandomAutocontrast()
+        autocontrasted_img = autocontraster(image)
+        return autocontrasted_img
         #blurrer = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
         #blurred_img = blurrer(image)
         #return blurred_img
