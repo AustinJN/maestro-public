@@ -58,9 +58,12 @@ class Prediction():
         #jitter = T.ColorJitter(brightness=.5, hue=.3)
         #jitted_imgs = jitter(image)
         #return jitted_imgs
-        blurrer = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
-        blurred_img = blurrer(image)
-        return blurred_img
+        equalizer = T.RandomEqualize()
+        equalized_imgs = equalizer(image)
+        return equalized_imgs
+        #blurrer = T.GaussianBlur(kernel_size=(3, 5), sigma=(0.1, 5))
+        #blurred_img = blurrer(image)
+        #return blurred_img
         #return image
 
     def detect_attack(self, original_image):
