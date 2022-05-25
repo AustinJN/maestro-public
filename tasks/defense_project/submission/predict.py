@@ -61,11 +61,11 @@ class Prediction():
         #equalizer = T.RandomEqualize()
         #equalized_img = equalizer(image)
         #return equalized_img
-        #autocontraster = T.RandomAutocontrast()
-        #autocontrasted_img = autocontraster(image)
+        autocontraster = T.RandomAutocontrast()
+        autocontrasted_img = autocontraster(image)
         #return autocontrasted_img
         blurrer = T.GaussianBlur(kernel_size=(1, 9), sigma=(0.1, 9))
-        blurred_img = blurrer(image)
+        blurred_img = blurrer(autocontrasted_img)
         return blurred_img
         #return image
 
