@@ -97,7 +97,7 @@ class Adv_Training():
                 loss = criterion(outputs, labels)
 
                 pert_output = self.model(perturbed_nonFGSM)
-                loss += criterion(pert_output, labels)  
+                loss += criterion(pert_output, labels) * 0.5 
                 pert_output = self.model(perturbed_FGSM)
                 loss += criterion(pert_output, labels)
                 pert_output = self.model(perturbed_PGD)
