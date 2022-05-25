@@ -58,14 +58,14 @@ class Prediction():
         #jitter = T.ColorJitter(brightness=.5, hue=.3)
         #jitted_img = jitter(image)
         #return jitted_img
-        equalizer = T.RandomEqualize()
-        equalized_img = equalizer(image)
+        #equalizer = T.RandomEqualize()
+        #equalized_img = equalizer(image)
         #return equalized_img
         #autocontraster = T.RandomAutocontrast()
         #autocontrasted_img = autocontraster(image)
         #return autocontrasted_img
-        blurrer = T.GaussianBlur(kernel_size=(1, 9), sigma=(0.1, 9))
-        blurred_img = blurrer(equalized_img)
+        blurrer = T.GaussianBlur(kernel_size=(1, 9), sigma=(1, 9))
+        blurred_img = blurrer(image)
         return blurred_img
         #return image
 
