@@ -107,9 +107,6 @@ class Adv_Training():
                 inputs = inputs.to(device)
                 labels = labels.to(device)
                 # zero the parameter gradients
-                adv_inputs, _ = self.perturb.attack(inputs, labels.detach().cpu().tolist())
-                adv_inputs = torch.tensor(adv_inputs).to(device)
-                # zero the parameter gradients
 
                 perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
                 perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
