@@ -80,7 +80,9 @@ class Adv_Training():
         self.min_val = min_val
         self.max_val = max_val
         self.target_label = target_label
-        self.perturb = self.load_perturb("../attacker_list/nontarget_FGSM")
+        self.perturb_nontarget_FGSM = self.load_perturb("../attacker_list/nontarget_FGSM")
+        self.perturb_target_FGSM = self.load_perturb("../attacker_list/target_FGSM")
+        self.perturb_target_PGD = self.load_perturb("../attacker_list/target_PGD")
 
     def load_perturb(self, attack_path):
         spec = importlib.util.spec_from_file_location('attack', attack_path + '/attack.py')
@@ -108,9 +110,25 @@ class Adv_Training():
                 adv_inputs, _ = self.perturb.attack(inputs, labels.detach().cpu().tolist())
                 adv_inputs = torch.tensor(adv_inputs).to(device)
                 # zero the parameter gradients
+
+                perturbed_nonFGSM, _ = self.perturb_nontarget_FGSM.attack(inputs, labels.detach().cpu().tolist())
+                perturbed_nonFGSM = torch.tensor(perturbed_nonFGSM).to(device)
+                perturbed_FGSM, _ = self.perturb_target_FGSM.attack(inputs, labels.detach().cpu().tolist(), 0)
+                perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
+                perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), 0)
+                perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
+
                 optimizer.zero_grad()
                 outputs = self.model(inputs)
                 loss = criterion(outputs, labels)
+
+                pert_output = self.model(perturbed_nonFGSM)
+                loss += criterion(pert_output, labels) * 0.5 
+                pert_output = self.model(perturbed_FGSM)
+                loss += criterion(pert_output, labels)
+                pert_output = self.model(perturbed_PGD)
+                loss += criterion(pert_output, labels)
+
                 loss.backward()
                 optimizer.step()
                 running_loss += loss.item()
@@ -134,7 +152,7 @@ class Adv_Training():
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    adv_training = Adv_Training(device, file_path='.')
+    adv_training = Adv_Training(device, file_path='.', target_label=0)
     dataset_configs = {
                 "name": "CIFAR10",
                 "binary": True,
