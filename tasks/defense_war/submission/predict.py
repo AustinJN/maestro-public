@@ -56,7 +56,7 @@ class Prediction():
     def preprocess(self, original_images):
         #image = torch.unsqueeze(original_images, 0)
         blurrer = T.GaussianBlur(kernel_size=(1, 9), sigma=(0.1, 9))
-        blurred_img = blurrer(image)
+        blurred_img = blurrer(original_images)
         return blurred_img
         # image = torch.unsqueeze(original_images, 0)
         #return original_images
