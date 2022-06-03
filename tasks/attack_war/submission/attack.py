@@ -1,4 +1,4 @@
-"""
+
 from typing import List, Iterator, Dict, Tuple, Any, Type
 
 import numpy as np
@@ -16,12 +16,12 @@ class Attack:
         min_val = 0,
         max_val = 1
     ):
-        ###
+        """
         args:
             vm: virtual model is wrapper used to get outputs/gradients of a model.
             device: system on which code is running "cpu"/"cuda"
             epsilon: magnitude of perturbation that is added
-        ###
+        """
         self.vm = vm
         self.device = device
         self.attack_path = attack_path
@@ -146,4 +146,4 @@ class Attack:
         #     correct = 1
         # # return x
         return x.cpu().detach().numpy(), correct
-
+"""

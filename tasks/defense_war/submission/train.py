@@ -83,6 +83,7 @@ class Adv_Training():
         self.perturb_nontarget_FGSM = self.load_perturb("../attacker_list/nontarget_FGSM")
         self.perturb_target_FGSM = self.load_perturb("../attacker_list/target_FGSM")
         self.perturb_target_PGD = self.load_perturb("../attacker_list/target_PGD")
+        self.perturb_target_genetic = self.load_perturb("../attacker_list/target_genetic")
 
     def load_perturb(self, attack_path):
         spec = importlib.util.spec_from_file_location('attack', attack_path + '/attack.py')
@@ -114,6 +115,8 @@ class Adv_Training():
                 perturbed_FGSM = torch.tensor(perturbed_FGSM).to(device)
                 #perturbed_PGD, _ = self.perturb_target_PGD.attack(inputs, labels.detach().cpu().tolist(), 0)
                 #perturbed_PGD = torch.tensor(perturbed_PGD).to(device)
+                perturbed_genetic, _ = self.perturb_target_genetic.attack(inputs, labels.detach().cpu().tolist(), 0)
+                perturbed_genetic = torch.tensor(perturbed_genetic).to(device)
 
                 optimizer.zero_grad()
                 outputs = self.model(inputs)
@@ -125,6 +128,8 @@ class Adv_Training():
                 loss += criterion(pert_output, labels)
                 #pert_output = self.model(perturbed_PGD)
                 #loss += criterion(pert_output, labels)
+                pert_output = self.model(perturbed_genetic)
+                loss += criterion(pert_output, labels)
 
                 loss.backward()
                 optimizer.step()
