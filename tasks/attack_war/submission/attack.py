@@ -655,8 +655,8 @@ class Attack:
         min_val = 0,
         max_val = 1,
         image_size = [1, 3, 32, 32],
-        n_population = 100,  #50
-        n_generation = 200,  #50
+        n_population = 50,  #100
+        n_generation = 50,  #200
         mask_rate = 0.2,
         temperature = 0.1,
         use_mask = False,
